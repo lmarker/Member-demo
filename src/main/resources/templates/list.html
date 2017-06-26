@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>首页</title>
+<meta name="content-type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/my.css}"/>
+</head>
+
+<body>
+	<div class="container">
+		<div id="header">
+			<div class="jumbotron back">
+				
+			</div>
+		</div>
+		<div id="body">
+			<div class="row">
+				<div class="col-md-12 col-md-push-0">
+					<h3>
+						好友列表 <span class="label label-success">所有信息</span>
+					</h3>
+					<hr />
+					<div>
+						<table class="table table-hover">
+							<thead>
+								<th>姓名</th>
+								<th>性别</th>
+								<th>年龄</th>
+								<th>电话</th>
+								<th>email</th>
+								<th>爱好</th>
+								<th width="140px">操作</th>
+							</thead>
+							<tbody th:each="message:${list}">
+								<tr>
+								
+									<td th:text="${message.name}"></td>
+									<td th:text="${message.sex}"></td>
+									<td th:text="${message.age}"></td>
+									<td th:text="${message.number}"></td>
+									<td th:text="${message.email}"></td>
+									<td th:text="${message.hobby}"></td>
+									<td><a class="btn btn-danger" th:href="@{person/delete(id=${message.id})}">删除</a>
+										<a class="btn btn-primary" th:href="@{person/detail(id=${message.id})}">详细</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p id="more" style="display:none"></p>
+					</div>
+					<div>
+						<a class="btn btn-info" href="person/insert">新增信息</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
