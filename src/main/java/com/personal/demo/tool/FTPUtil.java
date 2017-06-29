@@ -49,7 +49,7 @@ public class FTPUtil {
 		if(ftp.storeFile(filename, input))
 		    log.info("文件上传成功");
 		else
-		    log.info("文件上传失败："+ftp.getStatus()+"\n"+ftp.getReplyString());
+		    log.info("文件上传失败："+ftp.getReplyString()+"\n"+ftp.getStatus());
 		ftp.logout(); 
 		return true;
 	    }
