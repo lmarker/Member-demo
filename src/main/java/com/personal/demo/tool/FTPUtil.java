@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 public class FTPUtil {
 
     private static Logger log = LoggerFactory.getLogger(FTPUtil.class);
+
+    private static final String FTP_IP = "192.168.9.38";
+    private static final String FTP_USERNAME = "ftpuser";
+    private static final String FTP_PASSWORD = "lijiahao";
+
     /** 
      * Description: 向FTP服务器上传文件 
      * @Version1.0 
@@ -25,43 +30,42 @@ public class FTPUtil {
      * @param input 输入流 
      * @return 成功返回true，否则返回false 
      */  
-    public static boolean uploadFile(String server,String path,String filename,InputStream input) {
+    public static boolean uploadFile(String path,String filename,InputStream input) {
 	boolean success = false;  
 	FTPClient ftp = new FTPClient();
 	try {  
-	    ftp.setConnectTimeout(1000);
-	    ftp.setDataTimeout(1000);
-	    ftp.connect("192.168.9.38",21);
-	    ftp.login("ftpuser", "lijiahao"); 
+	    ftp.connect(FTP_IP);
+	    boolean loginstatus = ftp.login(FTP_USERNAME, FTP_PASSWORD); 
 	    String route="upload/"+path;
-	    if(!ftp.changeWorkingDirectory(route)) {
-		ftp.makeDirectory(route);
-		ftp.changeWorkingDirectory(route);
-	    } 
-	    log.info(ftp.getReplyString());
-	    ftp.listNames();
-	    log.info(ftp.getReplyString());
-	    ftp.setFileType(FTP.BINARY_FILE_TYPE);
-	    //ftp.enterLocalPassiveMode();
-	    ftp.storeFile(filename, input);
-	    log.info(ftp.getReplyString());
-	    input.close();  
-	    ftp.logout(); 
-	    return true;
+	    if(loginstatus) {
+		//登录成功
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		if(!ftp.changeWorkingDirectory(route)) {
+		    ftp.makeDirectory(route);
+		    ftp.changeWorkingDirectory(route);
+		} else
+		    log.info("当前目录存在，切换目录状态:"+ftp.getReplyCode());
+		log.info(ftp.getReplyString()+" "+ftp.getStatus());
+		if(ftp.storeFile(filename, input))
+		    log.info("文件上传成功");
+		else
+		    log.info("文件上传失败："+ftp.getStatus()+"\n"+ftp.getReplyString());
+		ftp.logout(); 
+		return true;
+	    }
 	} catch (IOException e) {  
 	    e.printStackTrace();  
 	} finally {  
-	    if (ftp.isConnected()) {  
-		try {  
-		    ftp.disconnect();  
-		} catch (IOException ioe) {  
-		}  
-	    }  
+	    try {
+		ftp.disconnect();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
 	}  
 	return success;
     }
 
     public static boolean uploadPicture(String fileName,InputStream input) {
-	return uploadFile("192.168.9.38","pic",fileName,input);
+	return uploadFile("pic",fileName,input);
     }
 }
