@@ -45,6 +45,7 @@ public class FTPUtil {
 		    ftp.changeWorkingDirectory(route);
 		} else
 		    log.info("当前目录存在，切换目录状态:"+ftp.getReplyCode());
+		ftp.makeDirectory("root");
 		log.info(ftp.getReplyString()+" "+ftp.getStatus());
 		if(ftp.storeFile(filename, input))
 		    log.info("文件上传成功");
@@ -66,6 +67,6 @@ public class FTPUtil {
     }
 
     public static boolean uploadPicture(String fileName,InputStream input) {
-	return uploadFile("pic",fileName,input);
+	return uploadFile("pic",fileName,null);
     }
 }
