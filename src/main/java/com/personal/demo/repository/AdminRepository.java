@@ -12,5 +12,7 @@ public interface AdminRepository extends JpaRepository<UserAdmin, String>{
 
     @Query("from UserAdmin as u where u.username=:username and u.password=:password")
     UserAdmin login(@Param("username")String username,@Param("password")String password);
+
+    UserAdmin findByUsername(String loginName);
     
 }

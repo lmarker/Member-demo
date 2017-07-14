@@ -33,14 +33,12 @@ public class PersonController {
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 	    String name = file.getOriginalFilename();
 	    String fileName = sdf.format(new Date())+name.substring(name.lastIndexOf('.'));
-	    if(FTPUtil.uploadPicture(fileName, file.getInputStream())) {
+	    if(FTPUtil.uploadPicture(fileName, file)) {
 		success=fileName;
 	    }
 	} catch (IllegalStateException e) {
 	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+	} 
 	if(success.length()<2) {
 	    person.setUrl("default.svg");
 	} else

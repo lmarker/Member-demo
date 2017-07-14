@@ -1,13 +1,12 @@
 package com.personal.demo.tool;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class FTPUtil {
@@ -30,7 +29,7 @@ public class FTPUtil {
      * @param input 输入流 
      * @return 成功返回true，否则返回false 
      */  
-    public static boolean uploadFile(String path,String filename,InputStream input) {
+    public static boolean uploadFile(String path,String filename,MultipartFile input) {
 	boolean success = false;  
 	FTPClient ftp = new FTPClient();
 	try {  
@@ -45,11 +44,11 @@ public class FTPUtil {
 		    ftp.changeWorkingDirectory(route);
 		} else
 		    log.info("当前目录存在，切换目录状态:"+ftp.getReplyCode());
-		ftp.makeDirectory("root");
 		log.info(ftp.getReplyString()+" "+ftp.getStatus());
-		if(ftp.storeFile(filename, input))
+		if(ftp.storeFile(filename+".tmp", input.getInputStream())) {
+		    ftp.rename(filename+".tmp", filename);
 		    log.info("文件上传成功");
-		else
+		} else
 		    log.info("文件上传失败："+ftp.getReplyString()+"\n"+ftp.getStatus());
 		ftp.logout(); 
 		return true;
@@ -66,7 +65,7 @@ public class FTPUtil {
 	return success;
     }
 
-    public static boolean uploadPicture(String fileName,InputStream input) {
-	return uploadFile("pic",fileName,null);
+    public static boolean uploadPicture(String fileName,MultipartFile input) {
+	return uploadFile("pic",fileName,input);
     }
 }

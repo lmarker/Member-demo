@@ -1,5 +1,7 @@
 package com.personal.demo.controller;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,14 +16,11 @@ import com.personal.demo.service.PersonService;
 @Controller
 public class ViewController {
 
+    private static final String DEFAULT_USER = "none";
+    
     @Autowired private LoginService loginService;
     
     @Autowired private PersonService personService;
-
-    @RequestMapping("/login")
-    public String login() {
-	return "login";
-    }
 
     @RequestMapping("/person")
     public ModelAndView login(@RequestParam("username") String username,@RequestParam("password")String password) {
@@ -41,7 +40,14 @@ public class ViewController {
 
     @RequestMapping("/index")
     public String hello(Model model) {
+	Subject sub = SecurityUtils.getSubject();
+	String username;
+	if(sub==null || sub.getPrincipals() == null) {
+	    username = DEFAULT_USER;
+	}
+	username = (String)sub.getPrincipals().getPrimaryPrincipal();
 	model.addAttribute("list",personService.getList());
+	model.addAttribute("user", username);
 	return "list";
     }
     
